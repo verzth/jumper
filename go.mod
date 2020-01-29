@@ -1,4 +1,4 @@
-module jumper
+module github.com/verzth/jumper
 
 go 1.13
 
