@@ -1,6 +1,6 @@
 # JUMPER
 [![Github go.mod](https://img.shields.io/github/go-mod/go-version/verzth/jumper?style=for-the-badge)](https://golang.org)
-[![Github Release](https://img.shields.io/github/v/release/verzth/jumper)](https://github.com/verzth/jumper)
+[![Github Release](https://img.shields.io/github/v/release/verzth/jumper?style=for-the-badge)](https://github.com/verzth/jumper)
 
 Jumper is Go Module to help Developer handling HTTP Request, its style like [Laravel](https://laravel.com/docs/5.8/requests) Request.
 
