@@ -39,7 +39,6 @@ func SomeHandler(w http.ResponseWriter, r *http.Request) {
     json := req.GetJSON("jsonstring") // Get jsonstring value as jumper.JSON
     file := req.GetFile("file") // Get file value as jumper.File
     files := req.GetFiles("files") // Get files value as Array of jumper.File
-    
-    res.ReplySuccess("0000000", "SSSSSS", "Success", nil)
+
 }
 ```
