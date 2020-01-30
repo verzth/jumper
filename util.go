@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+type Params map[string]interface{}
+
 func getHost(r *http.Request) string {
 	IPAddress := r.Header.Get("X-Real-Ip")
 	if IPAddress == "" {
