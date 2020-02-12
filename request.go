@@ -3,6 +3,7 @@ package jumper
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/gorilla/mux"
 	"mime/multipart"
 	"net/http"
@@ -180,11 +181,7 @@ func (r *Request) GetAll() map[string] interface{} {
 
 func (r *Request) Get(key string) string {
 	if r.params[key] != nil {
-		switch r.params[key].(type) {
-		case float64: return strconv.FormatFloat(r.params[key].(float64),'E', 3,10)
-		case int: return strconv.FormatInt(r.params[key].(int64),10)
-		case string: return r.params[key].(string)
-		}
+		return fmt.Sprintf("%v", r.params[key])
 	}
 	return ""
 }
