@@ -328,8 +328,7 @@ func (r *Request) GetMap(key string) map[string]interface{} {
 }
 
 func (r *Request) GetJSON(key string) JSON {
-	jsonObj := JSON{}
-	err := jsonObj.Scan(r.params[key])
+	jsonObj, err := json.Marshal(r.params[key])
 	if err != nil {
 		return nil
 	}else{
