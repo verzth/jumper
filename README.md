@@ -74,6 +74,8 @@ func SomeHandler(w http.ResponseWriter, r *http.Request) {
     var res = jumper.PlugResponse(w) // Response Writer
     var data interface{}
 
+    res.SetHttpCode(200) // Set HTTP Response Code. HTTP/1.1 standard (RFC 7231)
+
     res.Reply(0, "1000001", "ABCDEF", "Error Occurred", nil)
     res.Reply(1, "F000002", "SSSSSS", "Success", data)
     res.ReplyFailed("1000001", "ABCDEF", "Error Occurred", nil)
