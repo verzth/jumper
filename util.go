@@ -16,8 +16,12 @@ func getHost(r *http.Request) string {
 		IPAddress = r.RemoteAddr
 	}
 
-	cs := strings.Split(IPAddress, ":")
-	return cs[0]
+	lIndex := strings.LastIndex(IPAddress,":")
+	if lIndex != -1 {
+		return string([]rune(IPAddress)[0:lIndex])
+	}else {
+		return string([]rune(IPAddress)[0:])
+	}
 }
 
 func getPort(r *http.Request) string {
@@ -29,11 +33,10 @@ func getPort(r *http.Request) string {
 		IPAddress = r.RemoteAddr
 	}
 
-	cs := strings.Split(r.RemoteAddr, ":")
-
-	if len(cs) == 2 {
-		return cs[1]
-	}else{
+	lIndex := strings.LastIndex(IPAddress,":")
+	if lIndex != -1 {
+		return string([]rune(IPAddress)[lIndex+1:])
+	}else {
 		return ""
 	}
 }
