@@ -356,6 +356,21 @@ func (r *Request) Has(keys... string) bool {
 	return found
 }
 
+func (r *Request) hasHeader(key string) bool {
+	if _, found := r.header[key]; !found {
+		return false
+	}
+	return true
+}
+
+func (r *Request) HasHeader(keys... string) bool {
+	found := true
+	for _, key := range keys {
+		found = found && r.hasHeader(key)
+	}
+	return found
+}
+
 func (r *Request) Filled(keys... string) bool {
 	found := true
 	for _, key := range keys {
