@@ -91,11 +91,29 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 
 func scan(values []string) interface{} {
 	if len(values) == 1 {
-		return values[0]
+		return identify(values[0])
 	}else if len(values) > 1 {
-		return values
+		list := []interface{}{}
+		for k,vs := range values {
+			list[k] = identify(vs)
+		}
+		return list
 	} else {
 		return nil
+	}
+}
+
+func identify(value string) interface{} {
+	var arr []interface{}
+	var mp map[string]interface{}
+	errArr := json.Unmarshal([]byte(value), &arr)
+	errMp := json.Unmarshal([]byte(value), &mp)
+	if errArr == nil {
+		return arr
+	} else if errMp == nil {
+		return mp
+	} else {
+		return value
 	}
 }
 

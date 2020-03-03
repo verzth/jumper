@@ -82,3 +82,8 @@ func SomeHandler(w http.ResponseWriter, r *http.Request) {
     res.ReplySuccess("F000002", "SSSSSS", "Success", data)
 }
 ```
+
+Demo Link
+```
+http://localhost:9999/?list={"obj":{"id":[1,2,3]}}
+```
