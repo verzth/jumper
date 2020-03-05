@@ -41,13 +41,16 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 	}
 
 	switch r.Method {
-	case http.MethodPut,http.MethodPost,http.MethodDelete:{
+	case http.MethodGet,http.MethodPut,http.MethodPost,http.MethodDelete,http.MethodPatch:{
 		contentType := req.header.Get("Content-Type")
 		if strings.Contains(contentType, "multipart/form-data") {
 			contentType = "multipart/form-data"
 		}
 		switch contentType {
 		case "multipart/form-data":{
+			if r.Method == http.MethodGet {
+				return req
+			}
 			err := r.ParseMultipartForm(32 << 10)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
@@ -62,6 +65,9 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 			break
 		}
 		case "application/x-www-form-urlencoded":{
+			if r.Method == http.MethodGet {
+				return req
+			}
 			err := r.ParseForm()
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
