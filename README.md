@@ -15,9 +15,24 @@ go get github.com/verzth/jumper
 func SomeHandler(w http.ResponseWriter, r *http.Request) {
     var req = jumper.PlugRequest(r, w) // Request Parser
 
+    if req.HasHeader("X-Custom") {
+        // Check whether 'X-Custom' header exist without check the value
+    }
+
+    customHeader := req.Header("X-Custom")
+
     if req.Has("name") {
         // Check whether 'name' exist without check the value
     }
+
+    // http://localhost/service/{id:[0-9]+}/{segment...}
+    id := req.GetSegment("id") // Named segment from mux router
+    id := req.GetSegmentUint64("id") // Named segment from mux router
+    id := req.GetSegmentUint32("id") // Named segment from mux router
+    id := req.GetSegmentUint("id") // Named segment from mux router
+    id := req.GetSegmentInt64("id") // Named segment from mux router
+    id := req.GetSegmentInt32("id") // Named segment from mux router
+    id := req.GetSegmentInt("id") // Named segment from mux router
     
     if req.Filled("name") {
         // Check whether 'name' exist and filled

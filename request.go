@@ -212,6 +212,38 @@ func (r *Request) GetSegment(key string) string {
 	return r.segments[key]
 }
 
+func (r *Request) GetSegmentUint64(key string) uint64 {
+	if r.segments[key] != "" {
+		i64, _ := strconv.ParseUint(r.segments[key], 10, 32)
+		return i64
+	}
+	return 0
+}
+
+func (r *Request) GetSegmentUint32(key string) uint32 {
+	return uint32(r.GetSegmentUint64(key))
+}
+
+func (r *Request) GetSegmentUint(key string) uint {
+	return uint(r.GetSegmentUint64(key))
+}
+
+func (r *Request) GetSegmentInt64(key string) int64 {
+	if r.segments[key] != "" {
+		i64, _ := strconv.ParseInt(r.segments[key], 10, 32)
+		return i64
+	}
+	return 0
+}
+
+func (r *Request) GetSegmentInt32(key string) int32 {
+	return int32(r.GetSegmentInt64(key))
+}
+
+func (r *Request) GetSegmentInt(key string) int {
+	return int(r.GetSegmentInt64(key))
+}
+
 func (r *Request) GetFile(key string) (*File, error) {
 	if r.files[key] != nil {
 		_, ok := r.files[key].(*multipart.FileHeader)
