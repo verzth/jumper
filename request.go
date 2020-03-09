@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/verzth/go-utils/utils"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -368,6 +369,16 @@ func (r *Request) GetTimeNE(key string) *time.Time {
 func (r *Request) GetArray(key string) []interface{} {
 	if r.params[key] != nil {
 		if v, ok := r.params[key].([]interface{}); ok {
+			return v
+		}
+	}
+	return nil
+}
+
+func (r *Request) GetArrayUniquify(key string) []interface{} {
+	if r.params[key] != nil {
+		if v, ok := r.params[key].([]interface{}); ok {
+			utils.Uniquify(&v)
 			return v
 		}
 	}

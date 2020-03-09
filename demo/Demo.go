@@ -27,8 +27,10 @@ func index(w http.ResponseWriter, r *http.Request) {
 	var req = jumper.PlugRequest(r, w)
 	var res = jumper.PlugResponse(w)
 
-	vn := req.GetMap("list")["obj"]
-	fmt.Println(vn.(map[string]interface{})["id"].([]interface{})[0])
+	/*vn := req.GetMap("list")["obj"]
+	fmt.Println(vn.(map[string]interface{})["id"].([]interface{})[0])*/
+
+	fmt.Println(req.Get("test"))
 
 	res.ReplySuccess("0000000", "SSSSSS", "Success", nil)
 }

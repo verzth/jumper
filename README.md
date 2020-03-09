@@ -50,6 +50,7 @@ func SomeHandler(w http.ResponseWriter, r *http.Request) {
     birthdate, err := req.GetTime("birthdate") // Get birthdate value as *time.Time with Error handler
     birthdate := req.GetTimeNE("birthdate") // Get birthdate value as *time.Time with No Error
     ids := req.GetArray("ids") // Get ids value as Array of interface{}
+    ids := req.GetArrayUniquify("ids") // Get ids value as Array of interface{} and uniquify if possible
     obj := req.GetMap("object") // Get object value as Map of map[string]interface{}
     obj := req.GetStruct("object") // Get object value as struct of interface{}
     json := req.GetJSON("jsonstring") // Get jsonstring value as jumper.JSON
