@@ -45,3 +45,8 @@ func (j JSON) IsNull() bool {
 func (j JSON) Equals(j1 JSON) bool {
 	return bytes.Equal([]byte(j), []byte(j1))
 }
+
+func (j JSON) String() string {
+	buffer, _ := j.MarshalJSON()
+	return string(buffer)
+}
