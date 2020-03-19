@@ -205,7 +205,7 @@ func (r *Request) GetAll() map[string] interface{} {
 }
 
 func (r *Request) Get(key string) string {
-	if r.params[key] != nil {
+	if r.params[key] != nil && strings.ToLower(fmt.Sprintf("%v", r.params[key])) != "null" {
 		return fmt.Sprintf("%v", r.params[key])
 	}
 	return ""
