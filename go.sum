@@ -2,7 +2,11 @@ github.com/gorilla/handlers v1.4.2 h1:0QniY0USkHQ1RGCLfKxeNHK9bkDHGRYGNDFBCS+YAR
 github.com/gorilla/handlers v1.4.2/go.mod h1:Qkdc/uu4tH4g6mTK6auzZ766c4CA0Ng8+o/OAirnOIQ=
 github.com/gorilla/mux v1.7.3 h1:gnP5JzjVOuiZD07fKKToCAOjS0yOpj/qPETTXCCS6hw=
 github.com/gorilla/mux v1.7.3/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
+github.com/gorilla/mux v1.7.4 h1:VuZ8uybHlWmqV03+zRzdwKL4tUnIp1MAQtp1mIFE1bc=
+github.com/gorilla/mux v1.7.4/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
 github.com/verzth/go-utils v0.0.0-20200309094323-2bdeb06102e3 h1:77yI9b2G1/95WInYP6fUl6fFIlVtSEpjexJquXRKLTU=
 github.com/verzth/go-utils v0.0.0-20200309094323-2bdeb06102e3/go.mod h1:VRAnwae+xXZT8FwlbZFKmgUB5U/DzHAfuREIxitR/FA=
 github.com/verzth/go-utils v0.0.1 h1:2ntXZMxhjUyegqEglNPUctbpc5NoRfF+AgNs2Q4ULN0=
 github.com/verzth/go-utils v0.0.1/go.mod h1:VRAnwae+xXZT8FwlbZFKmgUB5U/DzHAfuREIxitR/FA=
+github.com/verzth/go-utils v0.1.0 h1:PheN6mb1kyAB/x4eSWUFUETZ6QrqTlUSQ0mueMZe2pQ=
+github.com/verzth/go-utils v0.1.0/go.mod h1:VRAnwae+xXZT8FwlbZFKmgUB5U/DzHAfuREIxitR/FA=

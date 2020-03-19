@@ -298,6 +298,13 @@ func (r *Request) GetUint64(key string) uint64 {
 		case string:
 			i64, _ := strconv.ParseUint(r.params[key].(string), 10, 32)
 			return i64
+		case bool: {
+			if r.params[key].(bool) {
+				return 1
+			}else{
+				return 0
+			}
+		}
 		}
 	}
 	return 0
@@ -319,6 +326,13 @@ func (r *Request) GetInt64(key string) int64 {
 		case string:
 			i64, _ := strconv.ParseInt(r.params[key].(string), 10, 32)
 			return i64
+		case bool: {
+			if r.params[key].(bool) {
+				return 1
+			}else{
+				return 0
+			}
+		}
 		}
 	}
 	return 0
@@ -340,6 +354,13 @@ func (r *Request) GetFloat64(key string) float64 {
 		case string:
 			i64, _ := strconv.ParseFloat(r.params[key].(string), 10)
 			return i64
+		case bool: {
+			if r.params[key].(bool) {
+				return 1
+			}else{
+				return 0
+			}
+		}
 		}
 	}
 	return 0
@@ -347,6 +368,20 @@ func (r *Request) GetFloat64(key string) float64 {
 
 func (r *Request) GetFloat(key string) float32 {
 	return float32(r.GetFloat64(key))
+}
+
+func (r *Request) GetBool(key string) bool {
+	if r.params[key] != nil {
+		switch r.params[key].(type) {
+		case float64: return r.params[key].(float64) > 0
+		case int: return float64(r.params[key].(int)) > 0
+		case string:
+			i64, _ := strconv.ParseFloat(r.params[key].(string), 10)
+			return i64 > 0
+		case bool: return r.params[key].(bool)
+		}
+	}
+	return false
 }
 
 func (r *Request) GetTime(key string) (*time.Time,error) {

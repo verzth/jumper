@@ -47,6 +47,7 @@ func SomeHandler(w http.ResponseWriter, r *http.Request) {
     id := req.GetInt("id") // Get id value as int
     price := req.GetFloat64("price") // Get price value as float64
     price := req.GetFloat("price") // Get price value as float32
+    status := req.GetBool("active") // Get active value as bool
     birthdate, err := req.GetTime("birthdate") // Get birthdate value as *time.Time with Error handler
     birthdate := req.GetTimeNE("birthdate") // Get birthdate value as *time.Time with No Error
     ids := req.GetArray("ids") // Get ids value as Array of interface{}
