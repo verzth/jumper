@@ -207,7 +207,7 @@ func (r *Request) GetAll() map[string] interface{} {
 
 func (r *Request) Get(key string) string {
 	val := reflect.ValueOf(r.params[key])
-	if r.params[key] != nil || (val.Kind() == reflect.Slice && val.Len() > 0){
+	if r.params[key] != nil || (val.IsValid() && val.Kind() == reflect.Slice && val.Len() > 0){
 		return fmt.Sprintf("%v", r.params[key])
 	}
 	return ""
@@ -465,9 +465,13 @@ func (r *Request) Filled(keys... string) (found bool) {
 	for _, key := range keys {
 		found = found && r.has(key)
 		val := reflect.ValueOf(r.params[key])
-		switch val.Kind() {
-		case reflect.String: found = found && strings.TrimSpace(r.Get(key)) != ""
-		case reflect.Slice: found = found && val.Len() > 0
+		if val.IsValid() {
+			switch val.Kind() {
+			case reflect.String: found = found && strings.TrimSpace(r.Get(key)) != ""
+			case reflect.Slice: found = found && val.Len() > 0
+			}
+		}else{
+			found = false
 		}
 	}
 	return
