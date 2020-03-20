@@ -30,7 +30,21 @@ func index(w http.ResponseWriter, r *http.Request) {
 	/*vn := req.GetMap("list")["obj"]
 	fmt.Println(vn.(map[string]interface{})["id"].([]interface{})[0])*/
 
-	fmt.Println(req.Get("test"))
+	if req.Filled("test"){
+		fmt.Println(req.Get("test"))
+	}else if req.Has("test"){
+		fmt.Println("Detected")
+	}else{
+		fmt.Println("Not detected")
+	}
+
+	if req.HeaderFilled("test"){
+		fmt.Println(req.Header("test"))
+	}else if req.HasHeader("test"){
+		fmt.Println("Detected")
+	}else{
+		fmt.Println("Not detected")
+	}
 
 	res.ReplySuccess("0000000", "SSSSSS", "Success", nil)
 }

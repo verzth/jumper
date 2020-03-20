@@ -8,6 +8,7 @@ import (
 	"github.com/verzth/go-utils/utils"
 	"mime/multipart"
 	"net/http"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -205,7 +206,8 @@ func (r *Request) GetAll() map[string] interface{} {
 }
 
 func (r *Request) Get(key string) string {
-	if r.params[key] != nil && strings.ToLower(fmt.Sprintf("%v", r.params[key])) != "null" {
+	val := reflect.ValueOf(r.params[key])
+	if r.params[key] != nil || (val.Kind() == reflect.Slice && val.Len() > 0){
 		return fmt.Sprintf("%v", r.params[key])
 	}
 	return ""
@@ -450,44 +452,54 @@ func (r *Request) has(key string) bool {
 	return true
 }
 
-func (r *Request) Has(keys... string) bool {
-	found := true
+func (r *Request) Has(keys... string) (found bool) {
+	found = true
 	for _, key := range keys {
 		found = found && r.has(key)
 	}
-	return found
+	return
+}
+
+func (r *Request) Filled(keys... string) (found bool) {
+	found = true
+	for _, key := range keys {
+		found = found && r.has(key)
+		val := reflect.ValueOf(r.params[key])
+		switch val.Kind() {
+		case reflect.String: found = found && strings.TrimSpace(r.Get(key)) != ""
+		case reflect.Slice: found = found && val.Len() > 0
+		}
+	}
+	return
 }
 
 func (r *Request) hasHeader(key string) bool {
-	if _, found := r.header[key]; !found {
+	if _, found := r.header[strings.Title(key)]; !found {
 		return false
 	}
 	return true
 }
 
-func (r *Request) HasHeader(keys... string) bool {
-	found := true
+func (r *Request) HasHeader(keys... string) (found bool) {
+	found = true
 	for _, key := range keys {
 		found = found && r.hasHeader(key)
 	}
-	return found
+	return
 }
 
-func (r *Request) Filled(keys... string) bool {
-	found := true
+func (r *Request) HeaderFilled(keys... string) (found bool) {
+	found = true
 	for _, key := range keys {
-		found = found && r.Has(key)
-		if _, ok := r.params[key].(string); ok {
-			found = found && strings.TrimSpace(r.params[key].(string)) != ""
-		}
+		found = found && r.hasHeader(key) && r.Header(key) != ""
 	}
-	return found
+	return
 }
 
-func (r *Request) HasFile(keys... string) bool {
-	found := true
+func (r *Request) HasFile(keys... string) (found bool) {
+	found = true
 	for _, key := range keys {
 		found = found && r.files[key] != nil
 	}
-	return found
+	return
 }
