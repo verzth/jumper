@@ -49,9 +49,9 @@ func (r *Response) Reply(status int, number string, code string, message string,
 }
 
 func (r *Response) ReplyFailed(number string, code string, message string, data... interface{}) error {
-	return r.Reply(0, number, code, message, data)
+	return r.Reply(0, number, code, message, data...)
 }
 
 func (r *Response) ReplySuccess(number string, code string, message string, data... interface{}) error {
-	return r.Reply(1, number, code, message, data)
+	return r.Reply(1, number, code, message, data...)
 }
