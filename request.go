@@ -415,7 +415,7 @@ func (r *Request) GetArray(key string) []interface{} {
 func (r *Request) GetArrayUniquify(key string) []interface{} {
 	if r.params[key] != nil {
 		if v, ok := r.params[key].([]interface{}); ok {
-			utils.Uniquify(&v)
+			utils.Slice.Uniquify(&v)
 			return v
 		}
 	}
