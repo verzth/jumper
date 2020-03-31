@@ -18,12 +18,10 @@ func SomeHandler(w http.ResponseWriter, r *http.Request) {
     if req.HasHeader("X-Custom") {
         // Check whether 'X-Custom' header exist without check the value
     }
-
-    customHeader := req.Header("X-Custom")
-
-    if req.Has("name") {
-        // Check whether 'name' exist without check the value
+    if req.HeaderFilled("X-Custom") {
+        // Check whether 'X-Custom' header exist and filled
     }
+    customHeader := req.Header("X-Custom") // Get header value
 
     // http://localhost/service/{id:[0-9]+}/{segment...}
     id := req.GetSegment("id") // Named segment from mux router
@@ -33,7 +31,10 @@ func SomeHandler(w http.ResponseWriter, r *http.Request) {
     id := req.GetSegmentInt64("id") // Named segment from mux router
     id := req.GetSegmentInt32("id") // Named segment from mux router
     id := req.GetSegmentInt("id") // Named segment from mux router
-    
+
+    if req.Has("name") {
+        // Check whether 'name' exist without check the value
+    }
     if req.Filled("name") {
         // Check whether 'name' exist and filled
     }
@@ -87,15 +88,23 @@ Response Success sample:
 
 Plug Response Writer
 ```go
+package mypackage
+
+import (
+    // SOME PACKAGES
+	"github.com/verzth/jumper"
+    // SOME PACKAGES
+)
+
 func SomeHandler(w http.ResponseWriter, r *http.Request) {
     var res = jumper.PlugResponse(w) // Response Writer
     var data interface{}
 
     res.SetHttpCode(200) // Set HTTP Response Code. HTTP/1.1 standard (RFC 7231)
 
-    res.Reply(0, "1000001", "ABCDEF", "Error Occurred", nil)
+    res.Reply(0, "1000001", "ABCDEF", "Error Occurred")
     res.Reply(1, "F000002", "SSSSSS", "Success", data)
-    res.ReplyFailed("1000001", "ABCDEF", "Error Occurred", nil)
+    res.ReplyFailed("1000001", "ABCDEF", "Error Occurred")
     res.ReplySuccess("F000002", "SSSSSS", "Success", data)
 }
 ```

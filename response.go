@@ -31,22 +31,27 @@ func (r *Response) SetHttpCode(code int) *Response {
 	return r
 }
 
-func (r *Response) Reply(status int, number string, code string, message string, data interface{}) error {
+/*
+'data' arguments only used on index 0
+ */
+func (r *Response) Reply(status int, number string, code string, message string, data... interface{}) error {
 	r.w.Header().Set("Content-Type", "application/json")
 
 	r.Status = status
 	r.StatusNumber = number
 	r.StatusCode = code
 	r.StatusMessage = message
-	r.Data = data
+	if len(data) > 0 {
+		r.Data = data[0]
+	}
 
 	return json.NewEncoder(r.w).Encode(r)
 }
 
-func (r *Response) ReplyFailed(number string, code string, message string, data interface{}) error {
+func (r *Response) ReplyFailed(number string, code string, message string, data... interface{}) error {
 	return r.Reply(0, number, code, message, data)
 }
 
-func (r *Response) ReplySuccess(number string, code string, message string, data interface{}) error {
+func (r *Response) ReplySuccess(number string, code string, message string, data... interface{}) error {
 	return r.Reply(1, number, code, message, data)
 }

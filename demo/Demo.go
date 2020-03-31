@@ -11,11 +11,11 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", index).Methods("GET")
+	r.HandleFunc("/", index).Methods(http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodPatch)
 
 	err := http.ListenAndServe(":9999", handlers.CORS(
-		handlers.AllowedHeaders([]string{"Content-Type","Authorization"}),
-		handlers.AllowedMethods([]string{http.MethodGet}),
+		handlers.AllowedHeaders([]string{"Accept","Content-Type","Authorization"}),
+		handlers.AllowedMethods([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodPatch}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(r))
 	if err != nil {
@@ -46,5 +46,5 @@ func index(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Not detected")
 	}
 
-	res.ReplySuccess("0000000", "SSSSSS", "Success", nil)
+	res.ReplySuccess("0000000", "SSSSSS", "Success")
 }
