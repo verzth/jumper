@@ -390,7 +390,10 @@ func (r *Request) GetTime(key string) (*time.Time,error) {
 	if r.params[key] != nil {
 		t, err := time.Parse(time.RFC3339,r.params[key].(string))
 		if err != nil {
-			return nil, errors.New("use RFC3339 format string for datetime")
+			t, err = time.Parse(time.RFC3339Nano,r.params[key].(string))
+			if err != nil {
+				return nil, errors.New("use RFC3339 format string for datetime")
+			}
 		}
 		return &t, nil
 	} else {
