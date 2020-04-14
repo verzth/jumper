@@ -26,8 +26,8 @@ func (f *File) Name() string {
 	return f.name
 }
 
-func (f *File) Store(path string, pattern string) (string, error) {
-	os.MkdirAll(path, os.ModeDir)
+func (f *File) Store(path string, pattern string, perm os.FileMode) (string, error) {
+	os.MkdirAll(path, perm)
 
 	file, err := ioutil.TempFile(path, pattern)
 	if err != nil {
@@ -45,18 +45,17 @@ func (f *File) Store(path string, pattern string) (string, error) {
 	return filepath.Base(f.name), nil
 }
 
-func (f *File) StoreAs(path string, name string) error {
-	os.MkdirAll(path, os.ModeDir)
+func (f *File) StoreAs(path string, name string, perm os.FileMode) error {
+	os.MkdirAll(path, perm)
 
 	fBytes, err := ioutil.ReadAll(f.GetFile())
 	if err != nil {
 		return errors.New("failed to read file")
 	}
 
-	err = ioutil.WriteFile(path+"/"+name, fBytes, os.ModePerm)
+	err = ioutil.WriteFile(path+"/"+name, fBytes, perm)
 	if err != nil {
 		return errors.New("failed to store file")
 	}
 	f.name = name
-	return nil
 }
