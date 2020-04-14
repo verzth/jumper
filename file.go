@@ -58,4 +58,5 @@ func (f *File) StoreAs(path string, name string, perm os.FileMode) error {
 		return errors.New("failed to store file")
 	}
 	f.name = name
+	return nil
 }
