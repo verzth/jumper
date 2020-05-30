@@ -8,6 +8,7 @@ import (
 	"github.com/verzth/go-utils/utils"
 	"mime/multipart"
 	"net/http"
+	"net/textproto"
 	"reflect"
 	"strconv"
 	"strings"
@@ -481,7 +482,7 @@ func (r *Request) Filled(keys... string) (found bool) {
 }
 
 func (r *Request) hasHeader(key string) bool {
-	if _, found := r.header[strings.Title(key)]; !found {
+	if _, found := r.header[textproto.CanonicalMIMEHeaderKey(key)]; !found {
 		return false
 	}
 	return true
