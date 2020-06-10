@@ -1,11 +1,14 @@
 package jumper
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/verzth/go-utils/utils"
+	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
@@ -85,6 +88,83 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 			dec := json.NewDecoder(r.Body)
 
 			err := dec.Decode(&req.params)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return req
+			}
+			break
+		}
+		}
+		break
+	}
+	}
+	return req
+}
+
+func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
+	req := &Request{
+		r:          *r,
+		segments: mux.Vars(r),
+		params: Params{},
+		files: map[string]interface{}{},
+		header: r.Header,
+		Method: r.Method,
+		ClientIP: getHost(r),
+		ClientPort: getPort(r),
+	}
+
+	// PARSE QUERY STRING PARAMETERS
+	for k, v := range r.URL.Query() {
+		req.params[k] = scan(v)
+	}
+
+	switch r.Method {
+	case http.MethodGet,http.MethodPut,http.MethodPost,http.MethodDelete,http.MethodPatch:{
+		contentType := req.header.Get("Content-Type")
+		if strings.Contains(contentType, "multipart/form-data") {
+			contentType = "multipart/form-data"
+		}
+		switch contentType {
+		case "multipart/form-data":{
+			if r.Method == http.MethodGet {
+				return req
+			}
+			err := r.ParseMultipartForm(32 << 10)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return req
+			}
+			for k, v := range r.MultipartForm.Value {
+				req.params[k] = scan(v)
+			}
+			for k, v := range r.MultipartForm.File {
+				req.files[k] = scanFiles(v)
+			}
+			break
+		}
+		case "application/x-www-form-urlencoded":{
+			if r.Method == http.MethodGet {
+				return req
+			}
+			err := r.ParseForm()
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return req
+			}
+			for k, v := range r.PostForm {
+				req.params[k] = scan(v)
+			}
+			break
+		}
+		case "application/json":{
+			b := bytes.NewBuffer(make([]byte,0))
+			reader := io.TeeReader(r.Body, b)
+
+			dec := json.NewDecoder(reader)
+
+			err := dec.Decode(&req.params)
+
+			r.Body = ioutil.NopCloser(b)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return req

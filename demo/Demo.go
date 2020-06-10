@@ -24,7 +24,8 @@ func main() {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	var req = jumper.PlugRequest(r, w)
+	var req = jumper.TouchRequest(r, w) // Plug Request without clearing io.Reader
+	req = jumper.PlugRequest(r,w) // Plug Request normally
 	var res = jumper.PlugResponse(w)
 
 	/*vn := req.GetMap("list")["obj"]
