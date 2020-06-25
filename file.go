@@ -40,6 +40,8 @@ func (f *File) Store(path string, pattern string, perm os.FileMode) (string, err
 		return "", errors.New("failed to read file")
 	}
 	file.Write(fBytes)
+
+	os.Chmod(file.Name(), perm)
 	f.name = file.Name()
 	//here we save our file to our path
 	return filepath.Base(f.name), nil
