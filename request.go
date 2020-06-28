@@ -124,8 +124,7 @@ func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
 		if strings.Contains(contentType, "multipart/form-data") {
 			contentType = "multipart/form-data"
 		}
-		switch contentType {
-		case "multipart/form-data":{
+		if strings.Contains(contentType, "multipart/form-data"){
 			if r.Method == http.MethodGet {
 				return req
 			}
@@ -140,9 +139,7 @@ func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
 			for k, v := range r.MultipartForm.File {
 				req.files[k] = scanFiles(v)
 			}
-			break
-		}
-		case "application/x-www-form-urlencoded":{
+		}else if strings.Contains(contentType, "application/x-www-form-urlencoded"){
 			if r.Method == http.MethodGet {
 				return req
 			}
@@ -154,9 +151,7 @@ func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
 			for k, v := range r.PostForm {
 				req.params[k] = scan(v)
 			}
-			break
-		}
-		case "application/json":{
+		}else if strings.Contains(contentType, "application/json"){
 			b := bytes.NewBuffer(make([]byte,0))
 			reader := io.TeeReader(r.Body, b)
 
@@ -169,8 +164,6 @@ func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
 				w.WriteHeader(http.StatusInternalServerError)
 				return req
 			}
-			break
-		}
 		}
 		break
 	}

@@ -14,3 +14,5 @@ github.com/verzth/go-utils v0.1.1 h1:IZeqWr5IP/bgVYIHZXrCQe3rx9/WUJaRrDnF5vlOOtA
 github.com/verzth/go-utils v0.1.1/go.mod h1:VRAnwae+xXZT8FwlbZFKmgUB5U/DzHAfuREIxitR/FA=
 github.com/verzth/go-utils v0.2.0 h1:/xKY7N2Ktn7jgRGrL8oRUskwrMDLTIKEozotkl50SQA=
 github.com/verzth/go-utils v0.2.0/go.mod h1:VRAnwae+xXZT8FwlbZFKmgUB5U/DzHAfuREIxitR/FA=
+github.com/verzth/go-utils v0.2.2 h1:uNID0XMLEGKh5IK4/RmtC66gLXVSMjDGdPe7EBy/g5c=
+github.com/verzth/go-utils v0.2.2/go.mod h1:VRAnwae+xXZT8FwlbZFKmgUB5U/DzHAfuREIxitR/FA=
