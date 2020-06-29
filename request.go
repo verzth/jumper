@@ -50,10 +50,6 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 	case http.MethodGet,http.MethodPut,http.MethodPost,http.MethodDelete,http.MethodPatch:{
 		contentType := req.header.Get("Content-Type")
 		if strings.Contains(contentType, "multipart/form-data") {
-			contentType = "multipart/form-data"
-		}
-		switch contentType {
-		case "multipart/form-data":{
 			if r.Method == http.MethodGet {
 				return req
 			}
@@ -68,9 +64,7 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 			for k, v := range r.MultipartForm.File {
 				req.files[k] = scanFiles(v)
 			}
-			break
-		}
-		case "application/x-www-form-urlencoded":{
+		}else if strings.Contains(contentType, "application/x-www-form-urlencoded"){
 			if r.Method == http.MethodGet {
 				return req
 			}
@@ -82,9 +76,7 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 			for k, v := range r.PostForm {
 				req.params[k] = scan(v)
 			}
-			break
-		}
-		case "application/json":{
+		}else if strings.Contains(contentType, "application/json") {
 			dec := json.NewDecoder(r.Body)
 
 			err := dec.Decode(&req.params)
@@ -92,8 +84,6 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 				w.WriteHeader(http.StatusInternalServerError)
 				return req
 			}
-			break
-		}
 		}
 		break
 	}
@@ -121,9 +111,6 @@ func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
 	switch r.Method {
 	case http.MethodGet,http.MethodPut,http.MethodPost,http.MethodDelete,http.MethodPatch:{
 		contentType := req.header.Get("Content-Type")
-		if strings.Contains(contentType, "multipart/form-data") {
-			contentType = "multipart/form-data"
-		}
 		if strings.Contains(contentType, "multipart/form-data"){
 			if r.Method == http.MethodGet {
 				return req
