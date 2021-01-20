@@ -1,3 +1,5 @@
+git.teknoku.digital/teknoku/go-utils v0.3.0 h1:TFPRQETiisuVH9zH1Tf2P9qNA/Iruzj5b4eNk4THZwk=
+git.teknoku.digital/teknoku/go-utils v0.3.0/go.mod h1:AUowhIIOVBH2U99quLWkFRYab47bf6sX0n1UPqpOHVo=
 github.com/gorilla/handlers v1.4.2 h1:0QniY0USkHQ1RGCLfKxeNHK9bkDHGRYGNDFBCS+YARg=
 github.com/gorilla/handlers v1.4.2/go.mod h1:Qkdc/uu4tH4g6mTK6auzZ766c4CA0Ng8+o/OAirnOIQ=
 github.com/gorilla/mux v1.7.3 h1:gnP5JzjVOuiZD07fKKToCAOjS0yOpj/qPETTXCCS6hw=
