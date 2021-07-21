@@ -451,9 +451,12 @@ func (r *Request) GetTime(key string) (*time.Time,error) {
 	if r.params[key] != nil {
 		t, err := time.Parse(time.RFC3339,r.params[key].(string))
 		if err != nil {
-			t, err = time.Parse(time.RFC3339Nano,r.params[key].(string))
+			t, err = time.Parse("2006-01-02T15:04:05.000Z07:00",r.params[key].(string)) // RFC3339Mili
 			if err != nil {
-				return nil, errors.New("use RFC3339 format string for datetime")
+				t, err = time.Parse(time.RFC3339Nano,r.params[key].(string))
+				if err != nil {
+					return nil, errors.New("use RFC3339 format string for datetime")
+				}
 			}
 		}
 		return &t, nil
