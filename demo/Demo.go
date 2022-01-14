@@ -32,7 +32,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(vn.(map[string]interface{})["id"].([]interface{})[0])*/
 
 	if req.Filled("test"){
-		fmt.Println(req.Get("test"))
+		fmt.Println(req.GetString("test"))
 	}else if req.Has("test"){
 		fmt.Println("Detected")
 	}else{
@@ -47,5 +47,5 @@ func index(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Not detected")
 	}
 
-	res.ReplySuccess("0000000", "SSSSSS", "Success")
+	_ = res.ReplySuccess("0000000", "SSSSSS", "Success")
 }

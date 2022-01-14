@@ -91,6 +91,7 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 	return req
 }
 
+// TouchRequest touch request with rewrite to reader, so handler can reuse the reader.
 func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
 	req := &Request{
 		r:          *r,
@@ -262,18 +263,6 @@ func (r *Request) Header(key string) string {
 	return r.header.Get(key)
 }
 
-func (r *Request) GetAll() map[string] interface{} {
-	return r.params
-}
-
-func (r *Request) Get(key string) string {
-	val := reflect.ValueOf(r.params[key])
-	if r.params[key] != nil || (val.IsValid() && val.Kind() == reflect.Slice && val.Len() > 0){
-		return fmt.Sprintf("%v", r.params[key])
-	}
-	return ""
-}
-
 func (r *Request) Append(key string, val string) {
 	r.params[key] = val
 }
@@ -353,98 +342,230 @@ func (r *Request) GetFiles(key string) ([]*File, error) {
 	return nil, errors.New("no such file")
 }
 
-func (r *Request) GetUint64(key string) uint64 {
+func (r *Request) GetAll() map[string] interface{} {
+	return r.params
+}
+
+
+func (r *Request) GetPtr(key string) *interface{} {
+	val := reflect.ValueOf(r.params[key])
+	if r.params[key] != nil || (val.IsValid() && val.Kind() == reflect.Interface){
+		v := r.params[key]
+		return &v
+	}
+	return nil
+}
+
+func (r *Request) Get(key string) interface{} {
+	v := r.GetPtr(key)
+	if v!=nil {
+		return v
+	}else{
+		return nil
+	}
+}
+
+func (r *Request) GetStringPtr(key string) *string {
+	val := reflect.ValueOf(r.params[key])
+	if r.params[key] != nil || (val.IsValid() && val.Kind() == reflect.Slice && val.Len() > 0){
+		v := fmt.Sprintf("%v", r.params[key])
+		return &v
+	}
+	return nil
+}
+
+func (r *Request) GetString(key string) string {
+	v := r.GetStringPtr(key)
+	if v!=nil {
+		return *v
+	}else{
+		return ""
+	}
+}
+
+func (r *Request) GetUint64Ptr(key string) *uint64 {
 	if r.params[key] != nil {
+		var v uint64
 		switch r.params[key].(type) {
-		case float64: return uint64(r.params[key].(float64))
-		case int: return uint64(r.params[key].(int))
+		case float64: v = uint64(r.params[key].(float64))
+		case int: v = uint64(r.params[key].(int))
 		case string:
-			i64, _ := strconv.ParseUint(r.params[key].(string), 10, 32)
-			return i64
+			v, _ = strconv.ParseUint(r.params[key].(string), 10, 32)
 		case bool: {
 			if r.params[key].(bool) {
-				return 1
+				v = 1
 			}else{
-				return 0
+				v = 0
 			}
 		}
 		}
+		return &v
 	}
-	return 0
+	return nil
+}
+
+func (r *Request) GetUint64(key string) uint64 {
+	v := r.GetUint64Ptr(key)
+	if v != nil {
+		return *v
+	}else{
+		return 0
+	}
+}
+
+func (r *Request) GetUint32Ptr(key string) *uint32 {
+	v := r.GetUint64Ptr(key)
+	if v != nil {
+		val := uint32(*v)
+		return &val
+	} else {
+		return nil
+	}
 }
 
 func (r *Request) GetUint32(key string) uint32 {
 	return uint32(r.GetUint64(key))
 }
 
+func (r *Request) GetUintPtr(key string) *uint {
+	v := r.GetUint64Ptr(key)
+	if v != nil {
+		val := uint(*v)
+		return &val
+	} else {
+		return nil
+	}
+}
+
 func (r *Request) GetUint(key string) uint {
 	return uint(r.GetUint64(key))
 }
 
-func (r *Request) GetInt64(key string) int64 {
+func (r *Request) GetInt64Ptr(key string) *int64 {
 	if r.params[key] != nil {
+		var v int64
 		switch r.params[key].(type) {
-		case float64: return int64(r.params[key].(float64))
-		case int: return int64(r.params[key].(int))
+		case float64: v = int64(r.params[key].(float64))
+		case int: v = int64(r.params[key].(int))
 		case string:
-			i64, _ := strconv.ParseInt(r.params[key].(string), 10, 32)
-			return i64
+			v, _ = strconv.ParseInt(r.params[key].(string), 10, 32)
 		case bool: {
 			if r.params[key].(bool) {
-				return 1
+				v = 1
 			}else{
-				return 0
+				v = 0
 			}
 		}
 		}
+		return &v
 	}
-	return 0
+	return nil
+}
+
+func (r *Request) GetInt64(key string) int64 {
+	v := r.GetInt64Ptr(key)
+	if v != nil {
+		return *v
+	}else{
+		return 0
+	}
+}
+
+func (r *Request) GetInt32Ptr(key string) *int32 {
+	v := r.GetUint64Ptr(key)
+	if v != nil {
+		val := int32(*v)
+		return &val
+	} else {
+		return nil
+	}
 }
 
 func (r *Request) GetInt32(key string) int32 {
 	return int32(r.GetInt64(key))
 }
 
+func (r *Request) GetIntPtr(key string) *int {
+	v := r.GetUint64Ptr(key)
+	if v != nil {
+		val := int(*v)
+		return &val
+	} else {
+		return nil
+	}
+}
+
 func (r *Request) GetInt(key string) int {
 	return int(r.GetInt64(key))
 }
 
-func (r *Request) GetFloat64(key string) float64 {
+func (r *Request) GetFloat64Ptr(key string) *float64 {
 	if r.params[key] != nil {
+		var v float64
 		switch r.params[key].(type) {
-		case float64: return r.params[key].(float64)
-		case int: return float64(r.params[key].(int))
+		case float64: v = r.params[key].(float64)
+		case int: v = float64(r.params[key].(int))
 		case string:
-			i64, _ := strconv.ParseFloat(r.params[key].(string), 10)
-			return i64
+			v, _ = strconv.ParseFloat(r.params[key].(string), 10)
 		case bool: {
 			if r.params[key].(bool) {
-				return 1
+				v = 1
 			}else{
-				return 0
+				v = 0
 			}
 		}
 		}
+		return &v
 	}
-	return 0
+	return nil
+}
+
+func (r *Request) GetFloat64(key string) float64 {
+	v := r.GetFloat64Ptr(key)
+	if v != nil {
+		return *v
+	}else{
+		return 0
+	}
+}
+
+func (r *Request) GetFloat32Ptr(key string) *float32 {
+	v := r.GetFloat64Ptr(key)
+	if v != nil {
+		val := float32(*v)
+		return &val
+	} else {
+		return nil
+	}
 }
 
 func (r *Request) GetFloat(key string) float32 {
 	return float32(r.GetFloat64(key))
 }
 
-func (r *Request) GetBool(key string) bool {
+func (r *Request) GetBoolPtr(key string) *bool {
 	if r.params[key] != nil {
+		var v bool
 		switch r.params[key].(type) {
-		case float64: return r.params[key].(float64) > 0
-		case int: return float64(r.params[key].(int)) > 0
+		case float64: v = r.params[key].(float64) > 0
+		case int: v = float64(r.params[key].(int)) > 0
 		case string:
 			i64, _ := strconv.ParseFloat(r.params[key].(string), 10)
-			return i64 > 0
-		case bool: return r.params[key].(bool)
+			v = i64 > 0
+		case bool: v = r.params[key].(bool)
 		}
+		return &v
 	}
-	return false
+	return nil
+}
+
+func (r *Request) GetBool(key string) bool {
+	v := r.GetBoolPtr(key)
+	if v != nil {
+		return *v
+	}else{
+		return false
+	}
 }
 
 func (r *Request) GetTime(key string) (*time.Time,error) {
@@ -534,8 +655,9 @@ func (r *Request) Filled(keys... string) (found bool) {
 		val := reflect.ValueOf(r.params[key])
 		if val.IsValid() {
 			switch val.Kind() {
-			case reflect.String: found = found && strings.TrimSpace(r.Get(key)) != ""
+			case reflect.String: found = found && strings.TrimSpace(r.GetString(key)) != ""
 			case reflect.Slice: found = found && val.Len() > 0
+			case reflect.Array: found = found && val.Len() > 0
 			}
 		}else{
 			found = false

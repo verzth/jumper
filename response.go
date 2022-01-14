@@ -31,9 +31,7 @@ func (r *Response) SetHttpCode(code int) *Response {
 	return r
 }
 
-/*
-'data' arguments only used on index 0
- */
+// Reply 'data' arguments only used on index 0 */
 func (r *Response) Reply(status int, number string, code string, message string, data... interface{}) error {
 	r.w.Header().Set("Content-Type", "application/json")
 
@@ -48,10 +46,12 @@ func (r *Response) Reply(status int, number string, code string, message string,
 	return json.NewEncoder(r.w).Encode(r)
 }
 
+// ReplyFailed 'data' arguments only used on index 0 */
 func (r *Response) ReplyFailed(number string, code string, message string, data... interface{}) error {
 	return r.Reply(0, number, code, message, data...)
 }
 
+// ReplySuccess 'data' arguments only used on index 0 */
 func (r *Response) ReplySuccess(number string, code string, message string, data... interface{}) error {
 	return r.Reply(1, number, code, message, data...)
 }

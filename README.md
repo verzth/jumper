@@ -39,7 +39,9 @@ func SomeHandler(w http.ResponseWriter, r *http.Request) {
         // Check whether 'name' exist and filled
     }
 
-    name := req.Get("name") // Get name value as string
+    // Add Ptr to get the Pointer
+    someVr := req.Get("key") // Get key value as interface
+    name := req.GetString("name") // Get name value as string
     id := req.GetUint64("id") // Get id value as uint64
     id := req.GetUint32("id") // Get id value as uint32
     id := req.GetUint("id") // Get id value as uint
@@ -47,7 +49,7 @@ func SomeHandler(w http.ResponseWriter, r *http.Request) {
     id := req.GetInt32("id") // Get id value as int32
     id := req.GetInt("id") // Get id value as int
     price := req.GetFloat64("price") // Get price value as float64
-    price := req.GetFloat("price") // Get price value as float32
+    price := req.GetFloat32("price") // Get price value as float32
     status := req.GetBool("active") // Get active value as bool
     birthdate, err := req.GetTime("birthdate") // Get birthdate value as *time.Time with Error handler
     birthdate := req.GetTimeNE("birthdate") // Get birthdate value as *time.Time with No Error
