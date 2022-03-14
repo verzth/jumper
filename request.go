@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"git.teknoku.digital/teknoku/go-utils/utils"
+	"git.verzth.work/go/utils"
 	"github.com/gorilla/mux"
 	"io"
 	"io/ioutil"
@@ -19,25 +19,25 @@ import (
 )
 
 type Request struct {
-	r http.Request
-	segments map[string]string
-	params Params
-	files map[string]interface{}
-	header http.Header
-	Method string
-	ClientIP string
+	r          http.Request
+	segments   map[string]string
+	params     Params
+	files      map[string]interface{}
+	header     http.Header
+	Method     string
+	ClientIP   string
 	ClientPort string
 }
 
 func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 	req := &Request{
 		r:          *r,
-		segments: mux.Vars(r),
-		params: Params{},
-		files: map[string]interface{}{},
-		header: r.Header,
-		Method: r.Method,
-		ClientIP: getHost(r),
+		segments:   mux.Vars(r),
+		params:     Params{},
+		files:      map[string]interface{}{},
+		header:     r.Header,
+		Method:     r.Method,
+		ClientIP:   getHost(r),
 		ClientPort: getPort(r),
 	}
 
@@ -47,46 +47,47 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 	}
 
 	switch r.Method {
-	case http.MethodGet,http.MethodPut,http.MethodPost,http.MethodDelete,http.MethodPatch:{
-		contentType := req.header.Get("Content-Type")
-		if strings.Contains(contentType, "multipart/form-data") {
-			if r.Method == http.MethodGet {
-				return req
-			}
-			err := r.ParseMultipartForm(32 << 10)
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				return req
-			}
-			for k, v := range r.MultipartForm.Value {
-				req.params[k] = scan(v)
-			}
-			for k, v := range r.MultipartForm.File {
-				req.files[k] = scanFiles(v)
-			}
-		}else if strings.Contains(contentType, "application/x-www-form-urlencoded"){
-			if r.Method == http.MethodGet {
-				return req
-			}
-			err := r.ParseForm()
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				return req
-			}
-			for k, v := range r.PostForm {
-				req.params[k] = scan(v)
-			}
-		}else if strings.Contains(contentType, "application/json") {
-			dec := json.NewDecoder(r.Body)
+	case http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodPatch:
+		{
+			contentType := req.header.Get("Content-Type")
+			if strings.Contains(contentType, "multipart/form-data") {
+				if r.Method == http.MethodGet {
+					return req
+				}
+				err := r.ParseMultipartForm(32 << 10)
+				if err != nil {
+					w.WriteHeader(http.StatusBadRequest)
+					return req
+				}
+				for k, v := range r.MultipartForm.Value {
+					req.params[k] = scan(v)
+				}
+				for k, v := range r.MultipartForm.File {
+					req.files[k] = scanFiles(v)
+				}
+			} else if strings.Contains(contentType, "application/x-www-form-urlencoded") {
+				if r.Method == http.MethodGet {
+					return req
+				}
+				err := r.ParseForm()
+				if err != nil {
+					w.WriteHeader(http.StatusBadRequest)
+					return req
+				}
+				for k, v := range r.PostForm {
+					req.params[k] = scan(v)
+				}
+			} else if strings.Contains(contentType, "application/json") {
+				dec := json.NewDecoder(r.Body)
 
-			err := dec.Decode(&req.params)
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				return req
+				err := dec.Decode(&req.params)
+				if err != nil {
+					w.WriteHeader(http.StatusInternalServerError)
+					return req
+				}
 			}
+			break
 		}
-		break
-	}
 	}
 	return req
 }
@@ -95,12 +96,12 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
 	req := &Request{
 		r:          *r,
-		segments: mux.Vars(r),
-		params: Params{},
-		files: map[string]interface{}{},
-		header: r.Header,
-		Method: r.Method,
-		ClientIP: getHost(r),
+		segments:   mux.Vars(r),
+		params:     Params{},
+		files:      map[string]interface{}{},
+		header:     r.Header,
+		Method:     r.Method,
+		ClientIP:   getHost(r),
 		ClientPort: getPort(r),
 	}
 
@@ -110,51 +111,52 @@ func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
 	}
 
 	switch r.Method {
-	case http.MethodGet,http.MethodPut,http.MethodPost,http.MethodDelete,http.MethodPatch:{
-		contentType := req.header.Get("Content-Type")
-		if strings.Contains(contentType, "multipart/form-data"){
-			if r.Method == http.MethodGet {
-				return req
-			}
-			err := r.ParseMultipartForm(32 << 10)
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				return req
-			}
-			for k, v := range r.MultipartForm.Value {
-				req.params[k] = scan(v)
-			}
-			for k, v := range r.MultipartForm.File {
-				req.files[k] = scanFiles(v)
-			}
-		}else if strings.Contains(contentType, "application/x-www-form-urlencoded"){
-			if r.Method == http.MethodGet {
-				return req
-			}
-			err := r.ParseForm()
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				return req
-			}
-			for k, v := range r.PostForm {
-				req.params[k] = scan(v)
-			}
-		}else if strings.Contains(contentType, "application/json"){
-			b := bytes.NewBuffer(make([]byte,0))
-			reader := io.TeeReader(r.Body, b)
+	case http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodPatch:
+		{
+			contentType := req.header.Get("Content-Type")
+			if strings.Contains(contentType, "multipart/form-data") {
+				if r.Method == http.MethodGet {
+					return req
+				}
+				err := r.ParseMultipartForm(32 << 10)
+				if err != nil {
+					w.WriteHeader(http.StatusBadRequest)
+					return req
+				}
+				for k, v := range r.MultipartForm.Value {
+					req.params[k] = scan(v)
+				}
+				for k, v := range r.MultipartForm.File {
+					req.files[k] = scanFiles(v)
+				}
+			} else if strings.Contains(contentType, "application/x-www-form-urlencoded") {
+				if r.Method == http.MethodGet {
+					return req
+				}
+				err := r.ParseForm()
+				if err != nil {
+					w.WriteHeader(http.StatusBadRequest)
+					return req
+				}
+				for k, v := range r.PostForm {
+					req.params[k] = scan(v)
+				}
+			} else if strings.Contains(contentType, "application/json") {
+				b := bytes.NewBuffer(make([]byte, 0))
+				reader := io.TeeReader(r.Body, b)
 
-			dec := json.NewDecoder(reader)
+				dec := json.NewDecoder(reader)
 
-			err := dec.Decode(&req.params)
+				err := dec.Decode(&req.params)
 
-			r.Body = ioutil.NopCloser(b)
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				return req
+				r.Body = ioutil.NopCloser(b)
+				if err != nil {
+					w.WriteHeader(http.StatusInternalServerError)
+					return req
+				}
 			}
+			break
 		}
-		break
-	}
 	}
 	return req
 }
@@ -162,9 +164,9 @@ func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
 func scan(values []string) interface{} {
 	if len(values) == 1 {
 		return identify(values[0])
-	}else if len(values) > 1 {
+	} else if len(values) > 1 {
 		list := []interface{}{}
-		for k,vs := range values {
+		for k, vs := range values {
 			list[k] = identify(vs)
 		}
 		return list
@@ -190,13 +192,12 @@ func identify(value string) interface{} {
 func scanFiles(values []*multipart.FileHeader) interface{} {
 	if len(values) == 1 {
 		return values[0]
-	}else if len(values) > 1 {
+	} else if len(values) > 1 {
 		return values
 	} else {
 		return nil
 	}
 }
-
 
 func (r *Request) GetHost() string {
 	return r.r.URL.Hostname()
@@ -231,12 +232,12 @@ func (r *Request) GetFragment() string {
 }
 
 func (r *Request) HasUser() bool {
-	_,_,ok := r.r.BasicAuth()
+	_, _, ok := r.r.BasicAuth()
 	return ok
 }
 
 func (r *Request) GetUsername() string {
-	user,_,ok := r.r.BasicAuth()
+	user, _, ok := r.r.BasicAuth()
 	if ok {
 		return user
 	}
@@ -244,7 +245,7 @@ func (r *Request) GetUsername() string {
 }
 
 func (r *Request) GetPassword() string {
-	_,pass,ok := r.r.BasicAuth()
+	_, pass, ok := r.r.BasicAuth()
 	if ok {
 		return pass
 	}
@@ -252,7 +253,7 @@ func (r *Request) GetPassword() string {
 }
 
 func (r *Request) GetUrl() string {
-	return r.r.URL.Scheme+"://"+r.r.URL.Host+r.r.URL.EscapedPath()
+	return r.r.URL.Scheme + "://" + r.r.URL.Host + r.r.URL.EscapedPath()
 }
 
 func (r *Request) GetFullUrl() string {
@@ -324,7 +325,7 @@ func (r *Request) GetFiles(key string) ([]*File, error) {
 		var files []*File
 		vs, ok := r.files[key].([]*multipart.FileHeader)
 		if ok {
-			for _, v := range vs{
+			for _, v := range vs {
 				f, err := v.Open()
 				if err != nil {
 					return nil, errors.New("files error")
@@ -342,14 +343,13 @@ func (r *Request) GetFiles(key string) ([]*File, error) {
 	return nil, errors.New("no such file")
 }
 
-func (r *Request) GetAll() map[string] interface{} {
+func (r *Request) GetAll() map[string]interface{} {
 	return r.params
 }
 
-
 func (r *Request) GetPtr(key string) *interface{} {
 	val := reflect.ValueOf(r.params[key])
-	if r.params[key] != nil || (val.IsValid() && val.Kind() == reflect.Interface){
+	if r.params[key] != nil || (val.IsValid() && val.Kind() == reflect.Interface) {
 		v := r.params[key]
 		return &v
 	}
@@ -358,16 +358,16 @@ func (r *Request) GetPtr(key string) *interface{} {
 
 func (r *Request) Get(key string) interface{} {
 	v := r.GetPtr(key)
-	if v!=nil {
+	if v != nil {
 		return v
-	}else{
+	} else {
 		return nil
 	}
 }
 
 func (r *Request) GetStringPtr(key string) *string {
 	val := reflect.ValueOf(r.params[key])
-	if r.params[key] != nil || (val.IsValid() && val.Kind() == reflect.Slice && val.Len() > 0){
+	if r.params[key] != nil || (val.IsValid() && val.Kind() == reflect.Slice && val.Len() > 0) {
 		v := fmt.Sprintf("%v", r.params[key])
 		return &v
 	}
@@ -376,9 +376,9 @@ func (r *Request) GetStringPtr(key string) *string {
 
 func (r *Request) GetString(key string) string {
 	v := r.GetStringPtr(key)
-	if v!=nil {
+	if v != nil {
 		return *v
-	}else{
+	} else {
 		return ""
 	}
 }
@@ -387,17 +387,20 @@ func (r *Request) GetUint64Ptr(key string) *uint64 {
 	if r.params[key] != nil {
 		var v uint64
 		switch r.params[key].(type) {
-		case float64: v = uint64(r.params[key].(float64))
-		case int: v = uint64(r.params[key].(int))
+		case float64:
+			v = uint64(r.params[key].(float64))
+		case int:
+			v = uint64(r.params[key].(int))
 		case string:
 			v, _ = strconv.ParseUint(r.params[key].(string), 10, 32)
-		case bool: {
-			if r.params[key].(bool) {
-				v = 1
-			}else{
-				v = 0
+		case bool:
+			{
+				if r.params[key].(bool) {
+					v = 1
+				} else {
+					v = 0
+				}
 			}
-		}
 		}
 		return &v
 	}
@@ -408,7 +411,7 @@ func (r *Request) GetUint64(key string) uint64 {
 	v := r.GetUint64Ptr(key)
 	if v != nil {
 		return *v
-	}else{
+	} else {
 		return 0
 	}
 }
@@ -445,17 +448,20 @@ func (r *Request) GetInt64Ptr(key string) *int64 {
 	if r.params[key] != nil {
 		var v int64
 		switch r.params[key].(type) {
-		case float64: v = int64(r.params[key].(float64))
-		case int: v = int64(r.params[key].(int))
+		case float64:
+			v = int64(r.params[key].(float64))
+		case int:
+			v = int64(r.params[key].(int))
 		case string:
 			v, _ = strconv.ParseInt(r.params[key].(string), 10, 32)
-		case bool: {
-			if r.params[key].(bool) {
-				v = 1
-			}else{
-				v = 0
+		case bool:
+			{
+				if r.params[key].(bool) {
+					v = 1
+				} else {
+					v = 0
+				}
 			}
-		}
 		}
 		return &v
 	}
@@ -466,7 +472,7 @@ func (r *Request) GetInt64(key string) int64 {
 	v := r.GetInt64Ptr(key)
 	if v != nil {
 		return *v
-	}else{
+	} else {
 		return 0
 	}
 }
@@ -503,17 +509,20 @@ func (r *Request) GetFloat64Ptr(key string) *float64 {
 	if r.params[key] != nil {
 		var v float64
 		switch r.params[key].(type) {
-		case float64: v = r.params[key].(float64)
-		case int: v = float64(r.params[key].(int))
+		case float64:
+			v = r.params[key].(float64)
+		case int:
+			v = float64(r.params[key].(int))
 		case string:
 			v, _ = strconv.ParseFloat(r.params[key].(string), 10)
-		case bool: {
-			if r.params[key].(bool) {
-				v = 1
-			}else{
-				v = 0
+		case bool:
+			{
+				if r.params[key].(bool) {
+					v = 1
+				} else {
+					v = 0
+				}
 			}
-		}
 		}
 		return &v
 	}
@@ -524,7 +533,7 @@ func (r *Request) GetFloat64(key string) float64 {
 	v := r.GetFloat64Ptr(key)
 	if v != nil {
 		return *v
-	}else{
+	} else {
 		return 0
 	}
 }
@@ -547,12 +556,15 @@ func (r *Request) GetBoolPtr(key string) *bool {
 	if r.params[key] != nil {
 		var v bool
 		switch r.params[key].(type) {
-		case float64: v = r.params[key].(float64) > 0
-		case int: v = float64(r.params[key].(int)) > 0
+		case float64:
+			v = r.params[key].(float64) > 0
+		case int:
+			v = float64(r.params[key].(int)) > 0
 		case string:
 			i64, _ := strconv.ParseFloat(r.params[key].(string), 10)
 			v = i64 > 0
-		case bool: v = r.params[key].(bool)
+		case bool:
+			v = r.params[key].(bool)
 		}
 		return &v
 	}
@@ -563,18 +575,18 @@ func (r *Request) GetBool(key string) bool {
 	v := r.GetBoolPtr(key)
 	if v != nil {
 		return *v
-	}else{
+	} else {
 		return false
 	}
 }
 
-func (r *Request) GetTime(key string) (*time.Time,error) {
+func (r *Request) GetTime(key string) (*time.Time, error) {
 	if r.params[key] != nil {
-		t, err := time.Parse(time.RFC3339,r.params[key].(string))
+		t, err := time.Parse(time.RFC3339, r.params[key].(string))
 		if err != nil {
-			t, err = time.Parse("2006-01-02T15:04:05.000Z07:00",r.params[key].(string)) // RFC3339Mili
+			t, err = time.Parse("2006-01-02T15:04:05.000Z07:00", r.params[key].(string)) // RFC3339Mili
 			if err != nil {
-				t, err = time.Parse(time.RFC3339Nano,r.params[key].(string))
+				t, err = time.Parse(time.RFC3339Nano, r.params[key].(string))
 				if err != nil {
 					return nil, errors.New("use RFC3339 format string for datetime")
 				}
@@ -623,7 +635,7 @@ func (r *Request) GetJSON(key string) JSON {
 	jsonObj, err := json.Marshal(r.params[key])
 	if err != nil {
 		return nil
-	}else{
+	} else {
 		return jsonObj
 	}
 }
@@ -640,7 +652,7 @@ func (r *Request) has(key string) bool {
 	return true
 }
 
-func (r *Request) Has(keys... string) (found bool) {
+func (r *Request) Has(keys ...string) (found bool) {
 	found = true
 	for _, key := range keys {
 		found = found && r.has(key)
@@ -648,18 +660,21 @@ func (r *Request) Has(keys... string) (found bool) {
 	return
 }
 
-func (r *Request) Filled(keys... string) (found bool) {
+func (r *Request) Filled(keys ...string) (found bool) {
 	found = true
 	for _, key := range keys {
 		found = found && r.has(key)
 		val := reflect.ValueOf(r.params[key])
 		if val.IsValid() {
 			switch val.Kind() {
-			case reflect.String: found = found && strings.TrimSpace(r.GetString(key)) != ""
-			case reflect.Slice: found = found && val.Len() > 0
-			case reflect.Array: found = found && val.Len() > 0
+			case reflect.String:
+				found = found && strings.TrimSpace(r.GetString(key)) != ""
+			case reflect.Slice:
+				found = found && val.Len() > 0
+			case reflect.Array:
+				found = found && val.Len() > 0
 			}
-		}else{
+		} else {
 			found = false
 		}
 	}
@@ -673,7 +688,7 @@ func (r *Request) hasHeader(key string) bool {
 	return true
 }
 
-func (r *Request) HasHeader(keys... string) (found bool) {
+func (r *Request) HasHeader(keys ...string) (found bool) {
 	found = true
 	for _, key := range keys {
 		found = found && r.hasHeader(key)
@@ -681,7 +696,7 @@ func (r *Request) HasHeader(keys... string) (found bool) {
 	return
 }
 
-func (r *Request) HeaderFilled(keys... string) (found bool) {
+func (r *Request) HeaderFilled(keys ...string) (found bool) {
 	found = true
 	for _, key := range keys {
 		found = found && r.hasHeader(key) && r.Header(key) != ""
@@ -689,7 +704,7 @@ func (r *Request) HeaderFilled(keys... string) (found bool) {
 	return
 }
 
-func (r *Request) HasFile(keys... string) (found bool) {
+func (r *Request) HasFile(keys ...string) (found bool) {
 	found = true
 	for _, key := range keys {
 		found = found && r.files[key] != nil

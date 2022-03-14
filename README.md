@@ -6,7 +6,7 @@
 Jumper is Go Module to help Developer handling HTTP Request & Response.
 
 ```bash
-go get git.teknoku.digital/teknoku/jumper
+go get git.verzth.work/go/jumper
 ```
 
 ##### Usage
@@ -94,7 +94,7 @@ package mypackage
 
 import (
     // SOME PACKAGES
-	"git.teknoku.digital/teknoku/jumper"
+	"git.verzth.work/go/jumper"
     // SOME PACKAGES
 )
 
