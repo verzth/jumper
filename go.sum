@@ -1,6 +1,7 @@
 git.verzth.work/go/utils v0.5.0 h1:Jd7UFhKjPGe23q5ao1fy6awHau0zhC7kfs0xVbNMlTQ=
 git.verzth.work/go/utils v0.5.0/go.mod h1:lvoywhPu/N0POuIDOvRVcVLp+sNvY8pPEIBYFiyrHJw=
-github.com/felixge/httpsnoop v1.0.1 h1:lvB5Jl89CsZtGIWuTcDM1E/vkVs49/Ml7JJe07l8SPQ=
+git.verzth.work/go/utils v1.0.0 h1:8UThItuzqycJ2oONpSX/jtD0/5yT0SNhhcveQESGBsE=
+git.verzth.work/go/utils v1.0.0/go.mod h1:lvoywhPu/N0POuIDOvRVcVLp+sNvY8pPEIBYFiyrHJw=
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/felixge/httpsnoop v1.0.2 h1:+nS9g82KMXccJ/wp0zyRW9ZBHFETmMGtkk+2CTTrW4o=
 github.com/felixge/httpsnoop v1.0.2/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
