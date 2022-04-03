@@ -47,7 +47,7 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 	}
 
 	switch r.Method {
-	case http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodPatch:
+	case http.MethodGet, "FETCH", http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodPatch:
 		{
 			contentType := req.header.Get("Content-Type")
 			if strings.Contains(contentType, "multipart/form-data") {
@@ -78,12 +78,14 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
 					req.params[k] = scan(v)
 				}
 			} else if strings.Contains(contentType, "application/json") {
-				dec := json.NewDecoder(r.Body)
+				if r.ContentLength > 0 {
+					dec := json.NewDecoder(r.Body)
 
-				err := dec.Decode(&req.params)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					return req
+					err := dec.Decode(&req.params)
+					if err != nil {
+						w.WriteHeader(http.StatusInternalServerError)
+						return req
+					}
 				}
 			}
 			break
@@ -142,17 +144,19 @@ func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
 					req.params[k] = scan(v)
 				}
 			} else if strings.Contains(contentType, "application/json") {
-				b := bytes.NewBuffer(make([]byte, 0))
-				reader := io.TeeReader(r.Body, b)
+				if r.ContentLength > 0 {
+					b := bytes.NewBuffer(make([]byte, 0))
+					reader := io.TeeReader(r.Body, b)
 
-				dec := json.NewDecoder(reader)
+					dec := json.NewDecoder(reader)
 
-				err := dec.Decode(&req.params)
+					err := dec.Decode(&req.params)
 
-				r.Body = ioutil.NopCloser(b)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					return req
+					r.Body = ioutil.NopCloser(b)
+					if err != nil {
+						w.WriteHeader(http.StatusInternalServerError)
+						return req
+					}
 				}
 			}
 			break
