@@ -113,7 +113,7 @@ func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
 	}
 
 	switch r.Method {
-	case http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodPatch:
+	case http.MethodGet, "FETCH", http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodPatch:
 		{
 			contentType := req.header.Get("Content-Type")
 			if strings.Contains(contentType, "multipart/form-data") {
