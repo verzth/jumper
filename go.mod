@@ -1,10 +1,11 @@
 module git.verzth.work/go/jumper
 
-go 1.13
+go 1.18
 
 require (
-	git.verzth.work/go/utils v1.0.0
-	github.com/felixge/httpsnoop v1.0.2 // indirect
+	git.verzth.work/go/utils v1.0.1
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 )
+
+require github.com/felixge/httpsnoop v1.0.3 // indirect
