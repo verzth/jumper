@@ -1,4 +1,4 @@
-module git.verzth.work/go/jumper
+module git.verzth.work/go/jumper/v2
 
 go 1.18
 

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"git.verzth.work/go/jumper"
+	"git.verzth.work/go/jumper/v2"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -47,5 +47,13 @@ func index(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Not detected")
 	}
 
+	var n1 Names
+	_ = jumper.ParseOf[Names](req, &n1)
+
 	_ = res.ReplySuccess("0000000", "SSSSSS", "Success")
+}
+
+type Names struct {
+	A string
+	B string
 }
