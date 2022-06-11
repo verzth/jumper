@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-type RequestJumper struct {
+type Request struct {
 	r          http.Request
 	segments   map[string]string
 	params     Params
@@ -29,8 +29,8 @@ type RequestJumper struct {
 	ClientPort string
 }
 
-func PlugRequest(r *http.Request, w http.ResponseWriter) *RequestJumper {
-	req := &RequestJumper{
+func PlugRequest(r *http.Request, w http.ResponseWriter) *Request {
+	req := &Request{
 		r:          *r,
 		segments:   mux.Vars(r),
 		params:     Params{},
@@ -95,8 +95,8 @@ func PlugRequest(r *http.Request, w http.ResponseWriter) *RequestJumper {
 }
 
 // TouchRequest touch request with rewrite to reader, so handler can reuse the reader.
-func TouchRequest(r *http.Request, w http.ResponseWriter) *RequestJumper {
-	req := &RequestJumper{
+func TouchRequest(r *http.Request, w http.ResponseWriter) *Request {
+	req := &Request{
 		r:          *r,
 		segments:   mux.Vars(r),
 		params:     Params{},
@@ -203,44 +203,44 @@ func scanFiles(values []*multipart.FileHeader) interface{} {
 	}
 }
 
-func (r *RequestJumper) GetHost() string {
+func (r *Request) GetHost() string {
 	return r.r.URL.Hostname()
 }
 
-func (r *RequestJumper) GetPort() string {
+func (r *Request) GetPort() string {
 	return r.r.URL.Port()
 }
 
-func (r *RequestJumper) GetScheme() string {
+func (r *Request) GetScheme() string {
 	return r.r.URL.Scheme
 }
 
-func (r *RequestJumper) GetOpaque() string {
+func (r *Request) GetOpaque() string {
 	return r.r.URL.Opaque
 }
 
-func (r *RequestJumper) GetPath() string {
+func (r *Request) GetPath() string {
 	return r.r.URL.Path
 }
 
-func (r *RequestJumper) GetRawPath() string {
+func (r *Request) GetRawPath() string {
 	return r.r.URL.RawPath
 }
 
-func (r *RequestJumper) GetRawQuery() string {
+func (r *Request) GetRawQuery() string {
 	return r.r.URL.RawQuery
 }
 
-func (r *RequestJumper) GetFragment() string {
+func (r *Request) GetFragment() string {
 	return r.r.URL.Fragment
 }
 
-func (r *RequestJumper) HasUser() bool {
+func (r *Request) HasUser() bool {
 	_, _, ok := r.r.BasicAuth()
 	return ok
 }
 
-func (r *RequestJumper) GetUsername() string {
+func (r *Request) GetUsername() string {
 	user, _, ok := r.r.BasicAuth()
 	if ok {
 		return user
@@ -248,7 +248,7 @@ func (r *RequestJumper) GetUsername() string {
 	return ""
 }
 
-func (r *RequestJumper) GetPassword() string {
+func (r *Request) GetPassword() string {
 	_, pass, ok := r.r.BasicAuth()
 	if ok {
 		return pass
@@ -256,27 +256,27 @@ func (r *RequestJumper) GetPassword() string {
 	return ""
 }
 
-func (r *RequestJumper) GetUrl() string {
+func (r *Request) GetUrl() string {
 	return r.r.URL.Scheme + "://" + r.r.URL.Host + r.r.URL.EscapedPath()
 }
 
-func (r *RequestJumper) GetFullUrl() string {
+func (r *Request) GetFullUrl() string {
 	return r.r.URL.String()
 }
 
-func (r *RequestJumper) Header(key string) string {
+func (r *Request) Header(key string) string {
 	return r.header.Get(key)
 }
 
-func (r *RequestJumper) Append(key string, val string) {
+func (r *Request) Append(key string, val string) {
 	r.params[key] = val
 }
 
-func (r *RequestJumper) GetSegment(key string) string {
+func (r *Request) GetSegment(key string) string {
 	return r.segments[key]
 }
 
-func (r *RequestJumper) GetSegmentUint64(key string) uint64 {
+func (r *Request) GetSegmentUint64(key string) uint64 {
 	if r.segments[key] != "" {
 		i64, _ := strconv.ParseUint(r.segments[key], 10, 32)
 		return i64
@@ -284,15 +284,15 @@ func (r *RequestJumper) GetSegmentUint64(key string) uint64 {
 	return 0
 }
 
-func (r *RequestJumper) GetSegmentUint32(key string) uint32 {
+func (r *Request) GetSegmentUint32(key string) uint32 {
 	return uint32(r.GetSegmentUint64(key))
 }
 
-func (r *RequestJumper) GetSegmentUint(key string) uint {
+func (r *Request) GetSegmentUint(key string) uint {
 	return uint(r.GetSegmentUint64(key))
 }
 
-func (r *RequestJumper) GetSegmentInt64(key string) int64 {
+func (r *Request) GetSegmentInt64(key string) int64 {
 	if r.segments[key] != "" {
 		i64, _ := strconv.ParseInt(r.segments[key], 10, 32)
 		return i64
@@ -300,15 +300,15 @@ func (r *RequestJumper) GetSegmentInt64(key string) int64 {
 	return 0
 }
 
-func (r *RequestJumper) GetSegmentInt32(key string) int32 {
+func (r *Request) GetSegmentInt32(key string) int32 {
 	return int32(r.GetSegmentInt64(key))
 }
 
-func (r *RequestJumper) GetSegmentInt(key string) int {
+func (r *Request) GetSegmentInt(key string) int {
 	return int(r.GetSegmentInt64(key))
 }
 
-func (r *RequestJumper) GetFile(key string) (*File, error) {
+func (r *Request) GetFile(key string) (*File, error) {
 	if r.files[key] != nil {
 		_, ok := r.files[key].(*multipart.FileHeader)
 		if ok {
@@ -324,7 +324,7 @@ func (r *RequestJumper) GetFile(key string) (*File, error) {
 	return nil, errors.New("no such file")
 }
 
-func (r *RequestJumper) GetFiles(key string) ([]*File, error) {
+func (r *Request) GetFiles(key string) ([]*File, error) {
 	if r.files[key] != nil {
 		var files []*File
 		vs, ok := r.files[key].([]*multipart.FileHeader)
@@ -347,11 +347,11 @@ func (r *RequestJumper) GetFiles(key string) ([]*File, error) {
 	return nil, errors.New("no such file")
 }
 
-func (r *RequestJumper) GetAll() map[string]interface{} {
+func (r *Request) GetAll() map[string]interface{} {
 	return r.params
 }
 
-func ParseTo[T any](r *RequestJumper) (T, error) {
+func ParseTo[T any](r *Request) (T, error) {
 	jsonString, _ := json.Marshal(r.params)
 	var en T
 	err := json.Unmarshal(jsonString, &en)
@@ -362,13 +362,13 @@ func ParseTo[T any](r *RequestJumper) (T, error) {
 	}
 }
 
-func ParseOf[T any](r *RequestJumper, en *T) error {
+func ParseOf[T any](r *Request, en *T) error {
 	jsonString, _ := json.Marshal(r.params)
 	err := json.Unmarshal(jsonString, en)
 	return err
 }
 
-func (r *RequestJumper) GetPtr(key string) *interface{} {
+func (r *Request) GetPtr(key string) *interface{} {
 	val := reflect.ValueOf(r.params[key])
 	if r.params[key] != nil || (val.IsValid() && val.Kind() == reflect.Interface) {
 		v := r.params[key]
@@ -377,7 +377,7 @@ func (r *RequestJumper) GetPtr(key string) *interface{} {
 	return nil
 }
 
-func (r *RequestJumper) Get(key string) interface{} {
+func (r *Request) Get(key string) interface{} {
 	v := r.GetPtr(key)
 	if v != nil {
 		return v
@@ -386,7 +386,7 @@ func (r *RequestJumper) Get(key string) interface{} {
 	}
 }
 
-func (r *RequestJumper) GetStringPtr(key string) *string {
+func (r *Request) GetStringPtr(key string) *string {
 	val := reflect.ValueOf(r.params[key])
 	if r.params[key] != nil || (val.IsValid() && val.Kind() == reflect.Slice && val.Len() > 0) {
 		v := fmt.Sprintf("%v", r.params[key])
@@ -395,7 +395,7 @@ func (r *RequestJumper) GetStringPtr(key string) *string {
 	return nil
 }
 
-func (r *RequestJumper) GetString(key string) string {
+func (r *Request) GetString(key string) string {
 	v := r.GetStringPtr(key)
 	if v != nil {
 		return *v
@@ -404,7 +404,7 @@ func (r *RequestJumper) GetString(key string) string {
 	}
 }
 
-func (r *RequestJumper) GetUint64Ptr(key string) *uint64 {
+func (r *Request) GetUint64Ptr(key string) *uint64 {
 	if r.params[key] != nil {
 		var v uint64
 		switch r.params[key].(type) {
@@ -428,7 +428,7 @@ func (r *RequestJumper) GetUint64Ptr(key string) *uint64 {
 	return nil
 }
 
-func (r *RequestJumper) GetUint64(key string) uint64 {
+func (r *Request) GetUint64(key string) uint64 {
 	v := r.GetUint64Ptr(key)
 	if v != nil {
 		return *v
@@ -437,7 +437,7 @@ func (r *RequestJumper) GetUint64(key string) uint64 {
 	}
 }
 
-func (r *RequestJumper) GetUint32Ptr(key string) *uint32 {
+func (r *Request) GetUint32Ptr(key string) *uint32 {
 	v := r.GetUint64Ptr(key)
 	if v != nil {
 		val := uint32(*v)
@@ -447,11 +447,11 @@ func (r *RequestJumper) GetUint32Ptr(key string) *uint32 {
 	}
 }
 
-func (r *RequestJumper) GetUint32(key string) uint32 {
+func (r *Request) GetUint32(key string) uint32 {
 	return uint32(r.GetUint64(key))
 }
 
-func (r *RequestJumper) GetUintPtr(key string) *uint {
+func (r *Request) GetUintPtr(key string) *uint {
 	v := r.GetUint64Ptr(key)
 	if v != nil {
 		val := uint(*v)
@@ -461,11 +461,11 @@ func (r *RequestJumper) GetUintPtr(key string) *uint {
 	}
 }
 
-func (r *RequestJumper) GetUint(key string) uint {
+func (r *Request) GetUint(key string) uint {
 	return uint(r.GetUint64(key))
 }
 
-func (r *RequestJumper) GetInt64Ptr(key string) *int64 {
+func (r *Request) GetInt64Ptr(key string) *int64 {
 	if r.params[key] != nil {
 		var v int64
 		switch r.params[key].(type) {
@@ -489,7 +489,7 @@ func (r *RequestJumper) GetInt64Ptr(key string) *int64 {
 	return nil
 }
 
-func (r *RequestJumper) GetInt64(key string) int64 {
+func (r *Request) GetInt64(key string) int64 {
 	v := r.GetInt64Ptr(key)
 	if v != nil {
 		return *v
@@ -498,7 +498,7 @@ func (r *RequestJumper) GetInt64(key string) int64 {
 	}
 }
 
-func (r *RequestJumper) GetInt32Ptr(key string) *int32 {
+func (r *Request) GetInt32Ptr(key string) *int32 {
 	v := r.GetUint64Ptr(key)
 	if v != nil {
 		val := int32(*v)
@@ -508,11 +508,11 @@ func (r *RequestJumper) GetInt32Ptr(key string) *int32 {
 	}
 }
 
-func (r *RequestJumper) GetInt32(key string) int32 {
+func (r *Request) GetInt32(key string) int32 {
 	return int32(r.GetInt64(key))
 }
 
-func (r *RequestJumper) GetIntPtr(key string) *int {
+func (r *Request) GetIntPtr(key string) *int {
 	v := r.GetUint64Ptr(key)
 	if v != nil {
 		val := int(*v)
@@ -522,11 +522,11 @@ func (r *RequestJumper) GetIntPtr(key string) *int {
 	}
 }
 
-func (r *RequestJumper) GetInt(key string) int {
+func (r *Request) GetInt(key string) int {
 	return int(r.GetInt64(key))
 }
 
-func (r *RequestJumper) GetFloat64Ptr(key string) *float64 {
+func (r *Request) GetFloat64Ptr(key string) *float64 {
 	if r.params[key] != nil {
 		var v float64
 		switch r.params[key].(type) {
@@ -550,7 +550,7 @@ func (r *RequestJumper) GetFloat64Ptr(key string) *float64 {
 	return nil
 }
 
-func (r *RequestJumper) GetFloat64(key string) float64 {
+func (r *Request) GetFloat64(key string) float64 {
 	v := r.GetFloat64Ptr(key)
 	if v != nil {
 		return *v
@@ -559,7 +559,7 @@ func (r *RequestJumper) GetFloat64(key string) float64 {
 	}
 }
 
-func (r *RequestJumper) GetFloat32Ptr(key string) *float32 {
+func (r *Request) GetFloat32Ptr(key string) *float32 {
 	v := r.GetFloat64Ptr(key)
 	if v != nil {
 		val := float32(*v)
@@ -569,11 +569,11 @@ func (r *RequestJumper) GetFloat32Ptr(key string) *float32 {
 	}
 }
 
-func (r *RequestJumper) GetFloat(key string) float32 {
+func (r *Request) GetFloat(key string) float32 {
 	return float32(r.GetFloat64(key))
 }
 
-func (r *RequestJumper) GetBoolPtr(key string) *bool {
+func (r *Request) GetBoolPtr(key string) *bool {
 	if r.params[key] != nil {
 		var v bool
 		switch r.params[key].(type) {
@@ -592,7 +592,7 @@ func (r *RequestJumper) GetBoolPtr(key string) *bool {
 	return nil
 }
 
-func (r *RequestJumper) GetBool(key string) bool {
+func (r *Request) GetBool(key string) bool {
 	v := r.GetBoolPtr(key)
 	if v != nil {
 		return *v
@@ -601,7 +601,7 @@ func (r *RequestJumper) GetBool(key string) bool {
 	}
 }
 
-func (r *RequestJumper) GetTime(key string) (*time.Time, error) {
+func (r *Request) GetTime(key string) (*time.Time, error) {
 	if r.params[key] != nil {
 		t, err := time.Parse(time.RFC3339, r.params[key].(string))
 		if err != nil {
@@ -619,12 +619,12 @@ func (r *RequestJumper) GetTime(key string) (*time.Time, error) {
 	}
 }
 
-func (r *RequestJumper) GetTimeNE(key string) *time.Time {
+func (r *Request) GetTimeNE(key string) *time.Time {
 	t, _ := r.GetTime(key)
 	return t
 }
 
-func (r *RequestJumper) GetArray(key string) []interface{} {
+func (r *Request) GetArray(key string) []interface{} {
 	if r.params[key] != nil {
 		if v, ok := r.params[key].([]interface{}); ok {
 			return v
@@ -633,7 +633,7 @@ func (r *RequestJumper) GetArray(key string) []interface{} {
 	return nil
 }
 
-func (r *RequestJumper) GetArrayUniquify(key string) []interface{} {
+func (r *Request) GetArrayUniquify(key string) []interface{} {
 	if r.params[key] != nil {
 		if v, ok := r.params[key].([]interface{}); ok {
 			utils.Slice.Uniquify(&v)
@@ -643,7 +643,7 @@ func (r *RequestJumper) GetArrayUniquify(key string) []interface{} {
 	return nil
 }
 
-func (r *RequestJumper) GetMap(key string) map[string]interface{} {
+func (r *Request) GetMap(key string) map[string]interface{} {
 	if r.params[key] != nil {
 		if v, ok := r.params[key].(map[string]interface{}); ok {
 			return v
@@ -652,7 +652,7 @@ func (r *RequestJumper) GetMap(key string) map[string]interface{} {
 	return nil
 }
 
-func (r *RequestJumper) GetJSON(key string) JSON {
+func (r *Request) GetJSON(key string) JSON {
 	jsonObj, err := json.Marshal(r.params[key])
 	if err != nil {
 		return nil
@@ -661,19 +661,19 @@ func (r *RequestJumper) GetJSON(key string) JSON {
 	}
 }
 
-func (r *RequestJumper) GetStruct(obj interface{}) error {
+func (r *Request) GetStruct(obj interface{}) error {
 	decoder := json.NewDecoder(r.r.Body)
 	return decoder.Decode(&obj)
 }
 
-func (r *RequestJumper) has(key string) bool {
+func (r *Request) has(key string) bool {
 	if _, found := r.params[key]; !found {
 		return false
 	}
 	return true
 }
 
-func (r *RequestJumper) Has(keys ...string) (found bool) {
+func (r *Request) Has(keys ...string) (found bool) {
 	found = true
 	for _, key := range keys {
 		found = found && r.has(key)
@@ -681,7 +681,7 @@ func (r *RequestJumper) Has(keys ...string) (found bool) {
 	return
 }
 
-func (r *RequestJumper) Filled(keys ...string) (found bool) {
+func (r *Request) Filled(keys ...string) (found bool) {
 	found = true
 	for _, key := range keys {
 		found = found && r.has(key)
@@ -702,14 +702,14 @@ func (r *RequestJumper) Filled(keys ...string) (found bool) {
 	return
 }
 
-func (r *RequestJumper) hasHeader(key string) bool {
+func (r *Request) hasHeader(key string) bool {
 	if _, found := r.header[textproto.CanonicalMIMEHeaderKey(key)]; !found {
 		return false
 	}
 	return true
 }
 
-func (r *RequestJumper) HasHeader(keys ...string) (found bool) {
+func (r *Request) HasHeader(keys ...string) (found bool) {
 	found = true
 	for _, key := range keys {
 		found = found && r.hasHeader(key)
@@ -717,7 +717,7 @@ func (r *RequestJumper) HasHeader(keys ...string) (found bool) {
 	return
 }
 
-func (r *RequestJumper) HeaderFilled(keys ...string) (found bool) {
+func (r *Request) HeaderFilled(keys ...string) (found bool) {
 	found = true
 	for _, key := range keys {
 		found = found && r.hasHeader(key) && r.Header(key) != ""
@@ -725,7 +725,7 @@ func (r *RequestJumper) HeaderFilled(keys ...string) (found bool) {
 	return
 }
 
-func (r *RequestJumper) HasFile(keys ...string) (found bool) {
+func (r *Request) HasFile(keys ...string) (found bool) {
 	found = true
 	for _, key := range keys {
 		found = found && r.files[key] != nil

@@ -6,7 +6,7 @@
 Jumper is Go Module to help Developer handling HTTP Request & Response.
 
 ```bash
-go get git.verzth.work/go/jumper
+go get git.verzth.work/go/jumper/v2
 ```
 
 ##### Usage
