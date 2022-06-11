@@ -356,7 +356,7 @@ func ParseTo[T any](r *Request) (T, error) {
 	var en T
 	err := json.Unmarshal(jsonString, &en)
 	if err != nil {
-		return nil, err
+		return en, err
 	} else {
 		return en, nil
 	}
