@@ -94,7 +94,7 @@ package mypackage
 
 import (
     // SOME PACKAGES
-	"git.verzth.work/go/jumper"
+	"git.verzth.work/go/jumper/v2"
     // SOME PACKAGES
 )
 
