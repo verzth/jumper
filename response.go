@@ -30,13 +30,15 @@ type ResponseX struct {
 	Data           interface{} `json:"data"`
 }
 
-func NewResponse(httpStatusCode int, Status int, StatusNumber string, StatusCode string, StatusMessage string, Data interface{}) Response {
+func NewResponse(httpStatusCode int, Status int, StatusNumber string, StatusCode string, StatusMessage string, Data ...interface{}) Response {
 	rx := ResponseX{
 		Status:        Status,
 		StatusNumber:  StatusNumber,
 		StatusCode:    StatusCode,
 		StatusMessage: StatusMessage,
-		Data:          Data,
+	}
+	if len(Data) > 0 {
+		rx.Data = Data[0]
 	}
 	rx.SetHttpCode(httpStatusCode)
 	return &rx
