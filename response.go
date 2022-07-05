@@ -40,7 +40,7 @@ func NewResponse(httpStatusCode int, Status int, StatusNumber string, StatusCode
 	if len(Data) > 0 {
 		rx.Data = Data[0]
 	}
-	rx.SetHttpCode(httpStatusCode)
+	rx.SetHttpStatusCode(httpStatusCode)
 	return &rx
 }
 
