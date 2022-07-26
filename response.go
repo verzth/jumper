@@ -8,29 +8,29 @@ import (
 type Response interface {
 	SetHttpCode(code int) Response
 	ReplyAs(res Response) error
-	Reply(status int, number string, code string, message string, data ...interface{}) error
-	ReplyFailed(number string, code string, message string, data ...interface{}) error
-	ReplySuccess(number string, code string, message string, data ...interface{}) error
+	Reply(status int, number string, code string, message string, data ...any) error
+	ReplyFailed(number string, code string, message string, data ...any) error
+	ReplySuccess(number string, code string, message string, data ...any) error
 	HttpStatusCode() int
 	SetHttpStatusCode(httpStatusCode int) Response
 	GetStatus() int
 	GetStatusNumber() string
 	GetStatusCode() string
 	GetStatusMessage() string
-	GetData() interface{}
+	GetData() any
 }
 
 type ResponseX struct {
 	w              http.ResponseWriter
 	httpStatusCode int
-	Status         int         `json:"status"`
-	StatusNumber   string      `json:"status_number"`
-	StatusCode     string      `json:"status_code"`
-	StatusMessage  string      `json:"status_message"`
-	Data           interface{} `json:"data"`
+	Status         int    `json:"status"`
+	StatusNumber   string `json:"status_number"`
+	StatusCode     string `json:"status_code"`
+	StatusMessage  string `json:"status_message"`
+	Data           any    `json:"data"`
 }
 
-func NewResponse(httpStatusCode int, Status int, StatusNumber string, StatusCode string, StatusMessage string, Data ...interface{}) Response {
+func NewResponse(httpStatusCode int, Status int, StatusNumber string, StatusCode string, StatusMessage string, Data ...any) Response {
 	rx := ResponseX{
 		Status:        Status,
 		StatusNumber:  StatusNumber,
@@ -69,7 +69,7 @@ func (r *ResponseX) GetStatusMessage() string {
 	return r.StatusMessage
 }
 
-func (r *ResponseX) GetData() interface{} {
+func (r *ResponseX) GetData() any {
 	return r.Data
 }
 
@@ -98,7 +98,7 @@ func (r *ResponseX) ReplyAs(res Response) error {
 }
 
 // Reply 'data' arguments only used on index 0 */
-func (r *ResponseX) Reply(status int, number string, code string, message string, data ...interface{}) error {
+func (r *ResponseX) Reply(status int, number string, code string, message string, data ...any) error {
 	r.w.Header().Set("Content-Type", "application/json")
 
 	r.Status = status
@@ -113,11 +113,17 @@ func (r *ResponseX) Reply(status int, number string, code string, message string
 }
 
 // ReplyFailed 'data' arguments only used on index 0 */
-func (r *ResponseX) ReplyFailed(number string, code string, message string, data ...interface{}) error {
+func (r *ResponseX) ReplyFailed(number string, code string, message string, data ...any) error {
 	return r.Reply(0, number, code, message, data...)
 }
 
 // ReplySuccess 'data' arguments only used on index 0 */
-func (r *ResponseX) ReplySuccess(number string, code string, message string, data ...interface{}) error {
+func (r *ResponseX) ReplySuccess(number string, code string, message string, data ...any) error {
 	return r.Reply(1, number, code, message, data...)
+}
+
+func (r *ResponseX) ReplyCustom(httpStatusCode int, res any) error {
+	r.w.Header().Set("Content-Type", "application/json")
+	r.w.WriteHeader(httpStatusCode)
+	return json.NewEncoder(r.w).Encode(res)
 }
