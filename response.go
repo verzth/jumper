@@ -11,6 +11,7 @@ type Response interface {
 	Reply(status int, number string, code string, message string, data ...any) error
 	ReplyFailed(number string, code string, message string, data ...any) error
 	ReplySuccess(number string, code string, message string, data ...any) error
+	ReplyCustom(httpStatusCode int, res any) error
 	HttpStatusCode() int
 	SetHttpStatusCode(httpStatusCode int) Response
 	GetStatus() int
