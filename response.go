@@ -95,7 +95,17 @@ func (r *ResponseX) ReplyAs(res Response) error {
 	if res.HttpStatusCode() != 0 {
 		r.w.WriteHeader(res.HttpStatusCode())
 	}
-	return r.Reply(res.GetStatus(), res.GetStatusNumber(), res.GetStatusCode(), res.GetStatusMessage(), res.GetData())
+	r.w.Header().Set("Content-Type", "application/json")
+
+	r.Status = res.GetStatus()
+	r.StatusNumber = res.GetStatusNumber()
+	r.StatusCode = res.GetStatusCode()
+	r.StatusMessage = res.GetStatusMessage()
+	if res.GetData() != nil {
+		r.Data = res.GetData()
+	}
+
+	return json.NewEncoder(r.w).Encode(r)
 }
 
 // Reply 'data' arguments only used on index 0 */
