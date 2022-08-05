@@ -92,10 +92,10 @@ func (r *ResponseX) SetHttpCode(code int) Response {
 }
 
 func (r *ResponseX) ReplyAs(res Response) error {
+	r.w.Header().Set("Content-Type", "application/json")
 	if res.HttpStatusCode() != 0 {
 		r.w.WriteHeader(res.HttpStatusCode())
 	}
-	r.w.Header().Set("Content-Type", "application/json")
 
 	r.Status = res.GetStatus()
 	r.StatusNumber = res.GetStatusNumber()
