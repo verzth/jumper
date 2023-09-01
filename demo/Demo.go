@@ -49,6 +49,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 	var n1 Names
 	_ = jumper.ParseOf[Names](req, &n1)
+	fmt.Println(n1, n1.C.Int64())
 
 	_ = res.ReplySuccess("0000000", "SSSSSS", "Success")
 }
@@ -56,4 +57,5 @@ func index(w http.ResponseWriter, r *http.Request) {
 type Names struct {
 	A string
 	B string
+	C jumper.Number
 }
