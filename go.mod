@@ -1,6 +1,6 @@
 module git.verzth.work/go/jumper/v2
 
-go 1.18
+go 1.20
 
 require (
 	git.verzth.work/go/utils v1.0.1
