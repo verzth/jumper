@@ -169,7 +169,7 @@ func scan(values []string) interface{} {
 	if len(values) == 1 {
 		return identify(values[0])
 	} else if len(values) > 1 {
-		list := []interface{}{}
+		list := make([]interface{}, len(values))
 		for k, vs := range values {
 			list[k] = identify(vs)
 		}
